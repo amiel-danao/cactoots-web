@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo ls
-      - run: echo pwd
+      - run: ls
+      - run: pwd
       - run: npm i && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
