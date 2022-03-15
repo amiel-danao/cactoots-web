@@ -663,7 +663,7 @@
           <!-- ============================================================== -->
           <div class="row">
             <div class="col-12">
-              <div class="card">
+              <!-- <div class="card">
                 <div class="card-body">
                   <h5 class="card-title mb-0">Static Table</h5>
                 </div>
@@ -697,8 +697,8 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
-              <div class="card">
+              </div> -->
+              <!-- <div class="card">
                 <div class="card-body">
                   <h5 class="card-title mb-0">Static Table With Checkboxes</h5>
                 </div>
@@ -794,8 +794,8 @@
                     </tbody>
                   </table>
                 </div>
-              </div>
-              <div class="card">
+              </div> -->
+              <!-- <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Collspan Table Example</h5>
                 </div>
@@ -828,10 +828,10 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
+              </div> -->
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Basic Datatable</h5>
+                  <h5 class="card-title">Orders</h5>
                   <div class="table-responsive">
                     <table
                       id="zero_config"
@@ -839,6 +839,12 @@
                     >
                       <thead>
                         <tr>
+                          <th>
+                            <label class="customcheckbox mb-3">
+                              <input type="checkbox" id="allCheckbox">
+                              <span class="checkmark"></span>
+                            </label>
+                          </th>
                           <th>Name</th>
                           <th>Position</th>
                           <th>Office</th>
@@ -848,7 +854,13 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                      <tr>
+                          <th>
+                            <label class="customcheckbox">
+                              <input type="checkbox" class="listCheckbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                          </th>
                           <td>Tiger Nixon</td>
                           <td>System Architect</td>
                           <td>Edinburgh</td>
@@ -857,6 +869,20 @@
                           <td>$320,800</td>
                         </tr>
                         <tr>
+                          <th>
+                            <label class="customcheckbox">
+                              <input type="checkbox" class="listCheckbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                          </th>
+                          <td>Tiger Nixon</td>
+                          <td>System Architect</td>
+                          <td>Edinburgh</td>
+                          <td>61</td>
+                          <td>2011/04/25</td>
+                          <td>$320,800</td>
+                        </tr>
+                      <!--<tr>
                           <td>Garrett Winters</td>
                           <td>Accountant</td>
                           <td>Tokyo</td>
@@ -1303,10 +1329,11 @@
                           <td>27</td>
                           <td>2011/01/25</td>
                           <td>$112,000</td>
-                        </tr>
+                        </tr> -->
                       </tbody>
                       <tfoot>
                         <tr>
+                          <th></th>
                           <th>Name</th>
                           <th>Position</th>
                           <th>Office</th>
@@ -1376,7 +1403,14 @@
       /****************************************
        *       Basic Table                   *
        ****************************************/
-      $("#zero_config").DataTable();
+      $("#zero_config").DataTable({
+          columnDefs: [
+            { orderable: false, targets: 0 }
+          ],
+          order: [[1, 'asc']]
+      });
     </script>
+    <script type="module" src="../dist/js/index.bundle.js"></script>
+    <script type="module" src="../dist/js/orders.bundle.js"></script>
   </body>
 </html>
