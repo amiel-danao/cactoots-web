@@ -17,9 +17,18 @@ module.exports = {
   //devtool: 'eval-source-map',
   devServer: {
         static: {
-        directory: path.join(__dirname, 'public'),
+            directory: path.join(__dirname, 'public'),
         },
         compress: true,
         port: 5000,
+        open: true,
+        hot: true,
+        devMiddleware: {
+            publicPath: '/dist/',
+            writeToDisk: true,
+        },
+        client: {
+          logging: 'none',
+        }
     }
 };

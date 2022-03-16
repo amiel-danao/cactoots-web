@@ -13,7 +13,7 @@
   "scripts": {
     "test": "echo \\\"Error: no test specified\\\" && exit 1",
     "build": "webpack --mode=development",
-    "start": "webpack-dev-server --mode=development --hot"
+    "start": "webpack-dev-server --config ./webpack.config.js --mode=development"
   },
   "repository": {
     "type": "git",

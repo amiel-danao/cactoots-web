@@ -2,5 +2,5 @@
 import { database} from './index.js';
 
 $(document).ready(function(){
-    console.log("Hello World!!!");
+    console.log("Hello World War");
 });
