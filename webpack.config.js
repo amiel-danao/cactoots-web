@@ -5,11 +5,15 @@ module.exports = {
   entry: {
     index: './public/src/index.js',
     orders: './public/src/orders.js',
+    waves: './public/src/waves.js',
+    sidebarmenu: './public/src/sidebarmenu.js',
+    sidebarmenu: './public/src/sidebarmenu.js',
+    custom: './public/src/custom.js'
   },
   // The location of the build folder described above
   output: {
     path: path.resolve(__dirname, 'public/dist/js'),
-    filename: '[name].bundle.js',
+    filename: '[name].js',
   },
   // Optional and for development only. This provides the ability to
   // map the built code back to the original source format when debugging.
