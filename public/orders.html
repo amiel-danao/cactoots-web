@@ -845,16 +845,15 @@
                               <span class="checkmark"></span>
                             </label>
                           </th>
-                          <th>Name</th>
-                          <th>Position</th>
-                          <th>Office</th>
-                          <th>Age</th>
-                          <th>Start date</th>
-                          <th>Salary</th>
+                          <th>Id</th>
+                          <th>Check out Date</th>
+                          <th>Status</th>
+                          <th>Total Price</th>
+                          <th>Customer Name</th>
                         </tr>
                       </thead>
                       <tbody>
-                      <tr>
+                        <!--<tr>
                           <th>
                             <label class="customcheckbox">
                               <input type="checkbox" class="listCheckbox" />
@@ -882,7 +881,7 @@
                           <td>2011/04/25</td>
                           <td>$320,800</td>
                         </tr>
-                      <!--<tr>
+                      <tr>
                           <td>Garrett Winters</td>
                           <td>Accountant</td>
                           <td>Tokyo</td>
@@ -1399,17 +1398,6 @@
     <script src="../assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
     <script src="../assets/extra-libs/multicheck/jquery.multicheck.js"></script>
     <script src="../assets/extra-libs/DataTables/datatables.min.js"></script>
-    <script>
-      /****************************************
-       *       Basic Table                   *
-       ****************************************/
-      $("#zero_config").DataTable({
-          columnDefs: [
-            { orderable: false, targets: 0 }
-          ],
-          order: [[1, 'asc']]
-      });
-    </script>
     <script type="module" src="../dist/js/index.bundle.js"></script>
     <script type="module" src="../dist/js/orders.bundle.js"></script>
   </body>
