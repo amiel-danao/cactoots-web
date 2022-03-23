@@ -748,55 +748,64 @@
     
     <!-- Edit Order modal -->   
 
-    <div id="editOrderModal" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-      <div class="modal-dialog modal-xl modal-dialog-scrollable">
-          <div class="modal-content">
-              <form id="editOrderForm">
-                  <div class="form-row">
-                      <div class="col-md-4 mb-3">
-                          <label for="orderId" class="text-monospace">
-                              <h3>Order Id: </h3>
-                          </label>
-                          <input type="text" readonly class="form-control-plaintext text-monospace" id="orderId" value="">
-                      </div>
-                      <div class="col-md-4 mb-3">
-                          <label for="checkOutDate">Checkout date: </label>
-                          <input type="date" id="checkOutDate" readonly>
-                      </div>
-                      <div class="col-md-4 mb-3">
-                          <label for="orderStatus">Status: </label>
-                          <select id="orderStatus" name="status" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
-                              <option value="0">Pending</option>
-                              <option value="1">Processing</option>
-                              <option value="2">On Delivery</option>
-                              <option value="3">Received</option>
-                          </select>
-                      </div>
-                  </div>
-                  <div class="form-row">
-                      <div class="col-md-6 mb-3">
-                          <div class="col-md-4 mb-3">
-                              <label for="totalPriceInput" class="text-monospace">
-                                  <h3>Total Price: </h3>
-                              </label>
-                              <input type="text" readonly class="form-control-plaintext text-monospace" id="totalPriceInput" value="">
-                          </div>
-                      </div>
-                      <div class="col-md-3 mb-3">
-                          <label for="customerNameInput" class="text-monospace">
-                              <h3>Customer Name: </h3>
-                          </label>
-                          <input type="text" readonly class="form-control-plaintext text-monospace" id="customerNameInput" value="">
-                      </div>
-                  </div>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <button type="submit" class="btn btn-success">Update</button>
-              </form>
-          </div>
+    
+  <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editOrderForm">
+
+              <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="orderId" class="text-monospace">
+                        <h3>Order Id: </h3>
+                    </label>
+                    <input type="text" readonly name="id" class="form-control-plaintext text-monospace" id="orderId" value="">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="checkOutDate">Checkout date: </label>
+                    <input type="text" id="checkOutDate" name="date_checkout" class="dateClass form-control-plaintext" readonly>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="orderStatus">Status: </label>
+                    <select id="orderStatus" name="state" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
+                        <option value="0">Pending</option>
+                        <option value="1">Processing</option>
+                        <option value="2">On Delivery</option>
+                        <option value="3">Received</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
+                        <label for="totalPriceInput" class="text-monospace">
+                            <h3>Total Price: </h3>
+                        </label>
+                        <input type="text" readonly name="total_price" class="form-control-plaintext text-monospace currency" id="totalPriceInput" value="">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="customerNameInput" class="text-monospace">
+                        Customer Name: 
+                    </label>
+                    <input type="text" readonly name="person_name" class="form-control-plaintext text-monospace" id="customerNameInput" value="">
+                </div>
+            </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" form="editOrderModal">Update</button>
+        </div>
       </div>
+    </div>
   </div>
-    
-    
     
       
     <!-- ============================================================== -->
@@ -818,6 +827,7 @@
     
     <script src="../assets/extra-libs/multicheck/jquery.multicheck.js"></script>
     <script src="../assets/extra-libs/DataTables/datatables.min.js"></script>
+    <script type="module" src="../dist/js/currency.min.js"></script>
     <script type="module" src="../dist/js/index.js"></script>
     <script type="module" src="../dist/js/orders.js"></script>
     <script src="../assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
