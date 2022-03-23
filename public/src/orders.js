@@ -6,7 +6,7 @@ var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
 const stateTexts = ["Pending", "Processing", "On Delivery", "Delivered"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
-const editButtontemplate = '<button type="button" class="btn btn-info" data-toggle="modal" data-target=".bd-example-modal-xl">Edit <i class="fas fa-edit"></i></button>';
+const editButtontemplate = '<button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
 const editButtonColumnIndex = 6;
 var loadingTarget;
 
@@ -19,6 +19,8 @@ $(document).ready(function(){
 
 function getDomReferences(){
     loadingTarget = document.getElementById('loadingOverlay');
+    const form = document.getElementById('editOrderForm');
+    form.addEventListener('submit', saveOrder);
 }
 
 function initializeOrderTable(){
@@ -75,8 +77,19 @@ function attachCheckBoxListener(){
     $("#allCheckbox").multicheck($(".listCheckbox"));
 }
 
-async function saveOrder(){
+async function saveOrder(event) {
+    event.preventDefault();
     toggleLoading('Saving order...', loadingTarget, true);
+    const data = new FormData(event.target);
+    const updatedOrder = Object.fromEntries(data.entries());
+    console.log(updatedOrder);
+
+    let orderId = $("#orderId").val();
+    await setDoc(doc(db, "orders", orderId), updatedOrder);
+    .then(function() {
+        console.log("Order was updated successfully!");
+        toggleLoading('', loadingTarget, false);
+    });
 }
 
 class Order {
