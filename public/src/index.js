@@ -1,8 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+import { getFirestore } from "firebase/firestore";
+import { Spinner } from 'spin.js';
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
   apiKey: "AIzaSyDEOzKoxLxyiUhQoNBAJXGlxBTaDs_kxO8",
   authDomain: "cactoots-544c1.firebaseapp.com",
@@ -14,6 +13,68 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const database = getFirestore();
 
-export { app, database };
+var opts = {
+  lines: 14, // The number of lines to draw
+  length: 33, // The length of each line
+  width: 19, // The line thickness
+  radius: 71, // The radius of the inner circle
+  scale: 1, // Scales overall size of the spinner
+  corners: 1, // Corner roundness (0..1)
+  speed: 1.2, // Rounds per second
+  rotate: 0, // The rotation offset
+  animation: 'spinner-line-shrink', // The CSS animation name for the lines
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#ffffff', // CSS color or array of colors
+  fadeColor: 'transparent', // CSS color or array of colors
+  top: '50%', // Top position relative to parent
+  left: '50%', // Left position relative to parent
+  shadow: '0 0 1px transparent', // Box-shadow for the lines
+  zIndex: 2000000000, // The z-index (defaults to 2e9)
+  className: 'spinner', // The CSS class to assign to the spinner
+  position: 'absolute', // Element positioning
+};
+
+const loading = new Spinner(opts);
+
+function toggleLoading(loadingText, loadingTarget, show){
+    if(show){
+        loadingTarget.addClass('show');
+        $(loadingTarget).text(loadingText);
+        loading.spin(loadingTarget);
+    }
+    else{
+        loading.stop();
+        loadingTarget.removeClass('show');
+    }
+}
+
+function appendLoadingDOM(){
+    var styles = `
+        #loadingOverlay{
+          position: fixed;
+            width: 100%;
+            height: 100%;
+          background: rgba(0,0,0,0.5);
+          visibility: hidden;
+        }
+        
+        .show{
+          visibility: visible;
+        }
+    `
+
+    var styleSheet = document.createElement("style");
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+    
+    var $div = $('<div />').appendTo('body');
+    $div.attr('id', 'loadingOverlay');
+}
+
+$(document).ready(function(){
+    appendLoadingDOM();
+});
+
+export { app, database, toggleLoading };
