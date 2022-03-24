@@ -746,8 +746,7 @@
     <!-- End Wrapper -->
     <!-- ============================================================== -->
     
-    <!-- Edit Order modal -->   
-    
+    <!-- Edit Order modal -->    
     <div id="editOrderModal" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
@@ -774,18 +773,18 @@
                             </div>
                         </div>
                         <div class="row">
+                            <label for="checkOutDate" class="text-monospace col-sm-2 col-form-label mb-3">
+                                <h4> Checkout date: </h4>
+                            </label>
                             <div class="col mb-3">
-                                <label for="checkOutDate" class="text-monospace col-sm-2 col-form-label mb-3">
-                                    <h4> Checkout date: </h4>
-                                </label>
                                 <input type="date" id="checkOutDate" readonly>
                             </div>
                         </div>
                         <div class="row">
+                            <label for="orderStatus" class="text-monospace col-sm-2 col-form-label mb-3">
+                                <h4>Status:</h4>
+                            </label>
                             <div class="col mb-3">
-                                <label for="orderStatus" class="text-monospace col-sm-2 col-form-label mb-3">
-                                    <h4>Status:</h4>
-                                </label>
                                 <select id="orderStatus" name="status" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
                                     <option value="0">Pending</option>
                                     <option value="1">Processing</option>
@@ -795,10 +794,10 @@
                             </div>
                         </div>
                         <div class="row">
+                            <label for="customerNameInput" class="text-monospace col-sm-2 col-form-label mb-3">
+                                <h4>Customer Name: </h4>
+                            </label>
                             <div class="col mb-3">
-                                <label for="customerNameInput" class="text-monospace col-sm-2 col-form-label mb-3">
-                                    <h4>Customer Name: </h4>
-                                </label>
                                 <input type="text" readonly class="form-control-plaintext text-monospace" id="customerNameInput" value="">
                             </div>
                         </div>
@@ -811,9 +810,6 @@
             </div>
         </div>
     </div>
-    
-    
-    
       
     <!-- ============================================================== -->
     <!-- All Jquery -->
