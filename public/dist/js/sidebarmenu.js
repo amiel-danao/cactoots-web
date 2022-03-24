@@ -3310,12 +3310,12 @@ $(function () {
 /******/ 	
 /******/ 	/* webpack/runtime/get update manifest filename */
 /******/ 	(() => {
-/******/ 		__webpack_require__.hmrF = () => ("hot/sidebarmenu-sidebarmenu-hot-update.json");
+/******/ 		__webpack_require__.hmrF = () => ("hot/sidebarmenu-hot-update.json");
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("96b6b743298e8698502b")
+/******/ 		__webpack_require__.h = () => ("796a6879ebc3c0dfe71a")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

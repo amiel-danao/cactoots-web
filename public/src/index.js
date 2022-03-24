@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
 import { Spinner } from 'spin.js';
+import moment from 'moment';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEOzKoxLxyiUhQoNBAJXGlxBTaDs_kxO8",
@@ -14,6 +15,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getFirestore();
+const dateformat = 'MM/DD/YYYY hh:mm:ss';
+const PESO = value => currency(value, { symbol: '₱', precision: 1, decimal: '.', separator: ',' });
 
 var opts = {
   lines: 14, // The number of lines to draw
@@ -40,13 +43,13 @@ const loading = new Spinner(opts);
 
 function toggleLoading(loadingText, loadingTarget, show){
     if(show){
-        loadingTarget.addClass('show');
+      $(loadingTarget).addClass('show');
         $(loadingTarget).text(loadingText);
         loading.spin(loadingTarget);
     }
     else{
         loading.stop();
-        loadingTarget.removeClass('show');
+        $(loadingTarget).removeClass('show');
     }
 }
 
@@ -69,13 +72,20 @@ function appendLoadingDOM(){
     styleSheet.innerText = styles;
     document.head.appendChild(styleSheet);
     
+    if(document.getElementById('loadingOverlay') != null){
+      return;
+    }
     var $div = $('<div />').appendTo('body');
     $div.attr('id', 'loadingOverlay');
 }
 
-$(document).ready(function(){
-    appendLoadingDOM();
-});
+function firebaseTimeStampToDateString(timestamp){
+  let date = timestamp.toDate();
+  let m = moment(date);
+  return m.format(dateformat);
+}
+
+appendLoadingDOM();
 
 window.onbeforeunload = function (e) {
     e = e || window.event;
@@ -89,4 +99,4 @@ window.onbeforeunload = function (e) {
     return 'Sure?';
 };
 
-export { app, database, toggleLoading };
+export { app, database, toggleLoading, dateformat, PESO, firebaseTimeStampToDateString };
