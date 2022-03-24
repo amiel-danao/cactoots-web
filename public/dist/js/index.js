@@ -46342,6 +46342,7 @@ const app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebase
 const database = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getFirestore)();
 const dateformat = 'MM/DD/YYYY hh:mm:ss';
 const PESO = value => currency(value, { symbol: '₱', precision: 1, decimal: '.', separator: ',' });
+var loadingDialog;
 
 var opts = {
   lines: 14, // The number of lines to draw
@@ -46364,44 +46365,18 @@ var opts = {
   position: 'absolute', // Element positioning
 };
 
-const loading = new spin_js__WEBPACK_IMPORTED_MODULE_2__.Spinner(opts);
 
-function toggleLoading(loadingText, loadingTarget, show){
+
+function toggleLoading(loadingText, show){
     if(show){
-      $(loadingTarget).addClass('show');
-        $(loadingTarget).text(loadingText);
-        loading.spin(loadingTarget);
+      loadingDialog = bootbox.dialog({
+        title: 'Loading',
+        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`
+      });
     }
     else{
-        loading.stop();
-        $(loadingTarget).removeClass('show');
+      loadingDialog.modal('hide');
     }
-}
-
-function appendLoadingDOM(){
-    var styles = `
-        #loadingOverlay{
-          position: fixed;
-            width: 100%;
-            height: 100%;
-          background: rgba(0,0,0,0.5);
-          visibility: hidden;
-        }
-        
-        .show{
-          visibility: visible;
-        }
-    `
-
-    var styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
-    
-    if(document.getElementById('loadingOverlay') != null){
-      return;
-    }
-    var $div = $('<div />').appendTo('body');
-    $div.attr('id', 'loadingOverlay');
 }
 
 function firebaseTimeStampToDateString(timestamp){
@@ -46409,8 +46384,6 @@ function firebaseTimeStampToDateString(timestamp){
   let m = moment__WEBPACK_IMPORTED_MODULE_3___default()(date);
   return m.format(dateformat);
 }
-
-appendLoadingDOM();
 
 window.onbeforeunload = function (e) {
     e = e || window.event;
@@ -48351,7 +48324,7 @@ function convertOffset(x, y, degrees) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("796a6879ebc3c0dfe71a")
+/******/ 		__webpack_require__.h = () => ("d1fb6c96540bac40312c")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

@@ -1,15 +1,14 @@
 'use strict';
 import { database, toggleLoading, dateformat, PESO, firebaseTimeStampToDateString } from './index.js';
-import { collection, query, where, onSnapshot, setDoc } from "firebase/firestore";
-
+import { collection, query, where, onSnapshot, setDoc, doc } from "firebase/firestore";
 
 var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
 const stateTexts = ["Pending", "Processing", "On Delivery", "Delivered"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
 const editButtontemplate = '<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
-var loadingTarget;
 var selectedOrder;
+var updatedOrder;
 
 $(function(){
     initializeOrderTable();
@@ -20,12 +19,12 @@ $(function(){
 
 
 function attachEventListeners(){
-    loadingTarget = document.getElementById('loadingOverlay');
     const form = document.getElementById('editOrderForm');
     form.addEventListener('submit', saveOrder);
     $("#zero_config tbody").on("click", ".editOrderButton", function(){
         let data = orderTable.row(this.parentNode).data();
         selectedOrder = data;
+        updatedOrder = selectedOrder;
         console.log(selectedOrder);
     });
 
@@ -44,15 +43,18 @@ function formDeserialize(form, data) {
             continue;
         }
         
+        let proxyLabel = $(form).find("p[data-proxy='"+input.id+"']");
         if($(input).hasClass('dateClass')){
             console.log(data[key]);
-            input.value =  firebaseTimeStampToDateString(data[key]);
-            continue;
+            if(proxyLabel != null){
+                proxyLabel.text(firebaseTimeStampToDateString(data[key]));
+            }
         }
 
         if($(input).hasClass('currency')){
-            input.value = PESO(val).format();
-            continue;
+            if(proxyLabel != null){
+                proxyLabel.text(PESO(val).format());
+            }
         }
 
         switch(input.type) {
@@ -70,7 +72,6 @@ function initializeOrderTable(){
             },
             {
                 render: function ( data, type, row ) {
-                    console.log(data);
                     return firebaseTimeStampToDateString(data);
                 },
                 targets: 2
@@ -96,7 +97,7 @@ function initializeOrderTable(){
             { defaultContent: editButtontemplate}
         ],
         createdRow: function( row, data, dataIndex ) {            
-            $(row).attr('id', data[0]);            
+            row.id = data.id;
         }
     });
 }
@@ -111,6 +112,7 @@ function attachOrderTableListener(){
         }
         if (change.type === "modified") {
             console.log("Modified order: ", change.doc.data());
+            orderTable.row('#'+change.doc.id).data( change.doc.data() ).draw();
         }
         if (change.type === "removed") {
             console.log("Removed order: ", change.doc.data());
@@ -125,16 +127,22 @@ function attachCheckBoxListener(){
 
 async function saveOrder(event) {
     event.preventDefault();
-    toggleLoading('Saving order...', loadingTarget, true);
+    toggleLoading('Saving order...', true);
     const data = new FormData(event.target);
-    const updatedOrder = Object.fromEntries(data.entries());
+
+    updatedOrder.state = $("#orderStatus").val();
+    //const updatedOrder = Object.fromEntries(data.entries());
     console.log(updatedOrder);
 
     let orderId = $("#orderId").val();
-    await setDoc(doc(database, "orders", orderId), updatedOrder)
+    await setDoc(doc(database, "orders", orderId), Object.assign({}, updatedOrder))
     .then(function() {
         console.log("Order was updated successfully!");
-        toggleLoading('', loadingTarget, false);
+        toggleLoading('', false);
+    })
+    .catch(error => {
+        toggleLoading('', false);
+        bootbox.alert(error);
     });
 }
 

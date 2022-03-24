@@ -761,7 +761,7 @@
                                 <h4>Order Id: </h4>
                             </label>
                             <div class="col mb-3">
-                                <input type="text" readonly class="form-control-plaintext text-monospace" id="orderId" value="">
+                                <input type="text" name="id" readonly class="form-control-plaintext text-monospace" id="orderId" value="">
                             </div>
                         </div>
                         <div class="row">
@@ -769,23 +769,25 @@
                                 <h4>Total Price: </h4>
                             </label>
                             <div class="col mb-3">
-                                <input type="text" readonly class="form-control-plaintext text-monospace" id="totalPriceInput" value="">
+                                <p data-proxy="totalPriceInput"></p>
+                                <input type="text" name="total_price" readonly class="form-control-plaintext text-monospace currency" id="totalPriceInput" value="" hidden>
                             </div>
                         </div>
                         <div class="row">
-                            <label for="checkOutDate" class="text-monospace col-sm-2 col-form-label mb-3">
+                            <label for="checkOutDate" class="text-monospace col-sm-2 col-form-label mb-3 date">
                                 <h4> Checkout date: </h4>
                             </label>
                             <div class="col mb-3">
-                                <input type="date" id="checkOutDate" readonly>
+                                <p data-proxy="checkOutDate"></p>
+                                <input type="text" name="date_checkout" id="checkOutDate" class="form-control-plaintext text-monospace dateClass" readonly hidden>
                             </div>
                         </div>
                         <div class="row">
-                            <label for="orderStatus" class="text-monospace col-sm-2 col-form-label mb-3">
+                            <label for="orderStatus"  class="text-monospace col-sm-2 col-form-label mb-3">
                                 <h4>Status:</h4>
                             </label>
                             <div class="col mb-3">
-                                <select id="orderStatus" name="status" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
+                                <select id="orderStatus" name="state" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
                                     <option value="0">Pending</option>
                                     <option value="1">Processing</option>
                                     <option value="2">On Delivery</option>
@@ -798,17 +800,19 @@
                                 <h4>Customer Name: </h4>
                             </label>
                             <div class="col mb-3">
-                                <input type="text" readonly class="form-control-plaintext text-monospace" id="customerNameInput" value="">
+                                <input type="text" name="person_name" readonly class="form-control-plaintext text-monospace" id="customerNameInput" value="">
                             </div>
                         </div>
                     </form>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success" form="editOrderForm">Update</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-primary" form="editOrderForm">Update</button>
                 </div>
             </div>
         </div>
+        
     </div>
       
     <!-- ============================================================== -->
@@ -828,6 +832,7 @@
     <script src="../dist/js/custom.js"></script>
     <!-- this page js -->
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js" integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="../assets/extra-libs/multicheck/jquery.multicheck.js"></script>
     <script src="../assets/extra-libs/DataTables/datatables.min.js"></script>
     <script type="module" src="../dist/js/currency.min.js"></script>

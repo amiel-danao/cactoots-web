@@ -46342,6 +46342,7 @@ const app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebase
 const database = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getFirestore)();
 const dateformat = 'MM/DD/YYYY hh:mm:ss';
 const PESO = value => currency(value, { symbol: '₱', precision: 1, decimal: '.', separator: ',' });
+var loadingDialog;
 
 var opts = {
   lines: 14, // The number of lines to draw
@@ -46364,44 +46365,18 @@ var opts = {
   position: 'absolute', // Element positioning
 };
 
-const loading = new spin_js__WEBPACK_IMPORTED_MODULE_2__.Spinner(opts);
 
-function toggleLoading(loadingText, loadingTarget, show){
+
+function toggleLoading(loadingText, show){
     if(show){
-      $(loadingTarget).addClass('show');
-        $(loadingTarget).text(loadingText);
-        loading.spin(loadingTarget);
+      loadingDialog = bootbox.dialog({
+        title: 'Loading',
+        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`
+      });
     }
     else{
-        loading.stop();
-        $(loadingTarget).removeClass('show');
+      loadingDialog.modal('hide');
     }
-}
-
-function appendLoadingDOM(){
-    var styles = `
-        #loadingOverlay{
-          position: fixed;
-            width: 100%;
-            height: 100%;
-          background: rgba(0,0,0,0.5);
-          visibility: hidden;
-        }
-        
-        .show{
-          visibility: visible;
-        }
-    `
-
-    var styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
-    
-    if(document.getElementById('loadingOverlay') != null){
-      return;
-    }
-    var $div = $('<div />').appendTo('body');
-    $div.attr('id', 'loadingOverlay');
 }
 
 function firebaseTimeStampToDateString(timestamp){
@@ -46409,8 +46384,6 @@ function firebaseTimeStampToDateString(timestamp){
   let m = moment__WEBPACK_IMPORTED_MODULE_3___default()(date);
   return m.format(dateformat);
 }
-
-appendLoadingDOM();
 
 window.onbeforeunload = function (e) {
     e = e || window.event;
@@ -46443,14 +46416,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
 const stateTexts = ["Pending", "Processing", "On Delivery", "Delivered"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
 const editButtontemplate = '<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
-var loadingTarget;
 var selectedOrder;
+var updatedOrder;
 
 $(function(){
     initializeOrderTable();
@@ -46461,12 +46433,12 @@ $(function(){
 
 
 function attachEventListeners(){
-    loadingTarget = document.getElementById('loadingOverlay');
     const form = document.getElementById('editOrderForm');
     form.addEventListener('submit', saveOrder);
     $("#zero_config tbody").on("click", ".editOrderButton", function(){
         let data = orderTable.row(this.parentNode).data();
         selectedOrder = data;
+        updatedOrder = selectedOrder;
         console.log(selectedOrder);
     });
 
@@ -46485,15 +46457,18 @@ function formDeserialize(form, data) {
             continue;
         }
         
+        let proxyLabel = $(form).find("p[data-proxy='"+input.id+"']");
         if($(input).hasClass('dateClass')){
             console.log(data[key]);
-            input.value =  (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.firebaseTimeStampToDateString)(data[key]);
-            continue;
+            if(proxyLabel != null){
+                proxyLabel.text((0,_index_js__WEBPACK_IMPORTED_MODULE_0__.firebaseTimeStampToDateString)(data[key]));
+            }
         }
 
         if($(input).hasClass('currency')){
-            input.value = (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.PESO)(val).format();
-            continue;
+            if(proxyLabel != null){
+                proxyLabel.text((0,_index_js__WEBPACK_IMPORTED_MODULE_0__.PESO)(val).format());
+            }
         }
 
         switch(input.type) {
@@ -46511,7 +46486,6 @@ function initializeOrderTable(){
             },
             {
                 render: function ( data, type, row ) {
-                    console.log(data);
                     return (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.firebaseTimeStampToDateString)(data);
                 },
                 targets: 2
@@ -46537,7 +46511,7 @@ function initializeOrderTable(){
             { defaultContent: editButtontemplate}
         ],
         createdRow: function( row, data, dataIndex ) {            
-            $(row).attr('id', data[0]);            
+            row.id = data.id;
         }
     });
 }
@@ -46552,6 +46526,7 @@ function attachOrderTableListener(){
         }
         if (change.type === "modified") {
             console.log("Modified order: ", change.doc.data());
+            orderTable.row('#'+change.doc.id).data( change.doc.data() ).draw();
         }
         if (change.type === "removed") {
             console.log("Removed order: ", change.doc.data());
@@ -46566,16 +46541,22 @@ function attachCheckBoxListener(){
 
 async function saveOrder(event) {
     event.preventDefault();
-    (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('Saving order...', loadingTarget, true);
+    (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('Saving order...', true);
     const data = new FormData(event.target);
-    const updatedOrder = Object.fromEntries(data.entries());
+
+    updatedOrder.state = $("#orderStatus").val();
+    //const updatedOrder = Object.fromEntries(data.entries());
     console.log(updatedOrder);
 
     let orderId = $("#orderId").val();
-    await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.setDoc)(doc(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders", orderId), updatedOrder)
+    await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.doc)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders", orderId), Object.assign({}, updatedOrder))
     .then(function() {
         console.log("Order was updated successfully!");
-        (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', loadingTarget, false);
+        (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', false);
+    })
+    .catch(error => {
+        (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', false);
+        bootbox.alert(error);
     });
 }
 
@@ -48525,7 +48506,7 @@ function convertOffset(x, y, degrees) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("796a6879ebc3c0dfe71a")
+/******/ 		__webpack_require__.h = () => ("d1fb6c96540bac40312c")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

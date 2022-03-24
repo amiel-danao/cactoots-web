@@ -17,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 const database = getFirestore();
 const dateformat = 'MM/DD/YYYY hh:mm:ss';
 const PESO = value => currency(value, { symbol: '₱', precision: 1, decimal: '.', separator: ',' });
+var loadingDialog;
 
 var opts = {
   lines: 14, // The number of lines to draw
@@ -39,44 +40,18 @@ var opts = {
   position: 'absolute', // Element positioning
 };
 
-const loading = new Spinner(opts);
 
-function toggleLoading(loadingText, loadingTarget, show){
+
+function toggleLoading(loadingText, show){
     if(show){
-      $(loadingTarget).addClass('show');
-        $(loadingTarget).text(loadingText);
-        loading.spin(loadingTarget);
+      loadingDialog = bootbox.dialog({
+        title: 'Loading',
+        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`
+      });
     }
     else{
-        loading.stop();
-        $(loadingTarget).removeClass('show');
+      loadingDialog.modal('hide');
     }
-}
-
-function appendLoadingDOM(){
-    var styles = `
-        #loadingOverlay{
-          position: fixed;
-            width: 100%;
-            height: 100%;
-          background: rgba(0,0,0,0.5);
-          visibility: hidden;
-        }
-        
-        .show{
-          visibility: visible;
-        }
-    `
-
-    var styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
-    
-    if(document.getElementById('loadingOverlay') != null){
-      return;
-    }
-    var $div = $('<div />').appendTo('body');
-    $div.attr('id', 'loadingOverlay');
 }
 
 function firebaseTimeStampToDateString(timestamp){
@@ -84,8 +59,6 @@ function firebaseTimeStampToDateString(timestamp){
   let m = moment(date);
   return m.format(dateformat);
 }
-
-appendLoadingDOM();
 
 window.onbeforeunload = function (e) {
     e = e || window.event;
