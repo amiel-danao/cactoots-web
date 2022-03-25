@@ -46,7 +46,11 @@ function toggleLoading(loadingText, show){
     if(show){
       loadingDialog = bootbox.dialog({
         title: 'Loading',
-        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`
+        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`,
+        backdrop: true,
+        centerVertical: true,
+        onEscape: false,
+        closeButton: false
       });
     }
     else{
