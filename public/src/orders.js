@@ -4,7 +4,7 @@ import { collection, query, where, onSnapshot, setDoc, doc } from "firebase/fire
 
 var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
-const stateTexts = ["Pending", "Processing", "On Delivery", "Delivered"];
+const stateTexts = ["Pending", "Processing", "On Delivery", "Received"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
 const editButtontemplate = '<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
 var selectedOrder;
