@@ -17,7 +17,6 @@ $(function(){
     attachCheckBoxListener();
 });
 
-
 function attachEventListeners(){
     const form = document.getElementById('editOrderForm');
     form.addEventListener('submit', saveOrder);
@@ -31,6 +30,19 @@ function attachEventListeners(){
     var myModalEl = document.getElementById('editOrderModal');
     myModalEl.addEventListener('shown.bs.modal', function (event) {
         formDeserialize(form, selectedOrder);
+    });
+    
+    form.addEventListener("change", function(event){
+        console.log(event.target);
+        let newValue = event.target.value;
+        let propertyName = $(event.target).attr('name');
+        let dataType = $(event.target).attr('data-type');
+        // TODO: process newValue based on data type
+        if(dataType == "int"){
+            newValue = parseInt(newValue);
+        }
+        
+        updatedOrder[propertyName] = newValue;
     });
 }
 
@@ -128,16 +140,13 @@ function attachCheckBoxListener(){
 async function saveOrder(event) {
     event.preventDefault();
     toggleLoading('Saving order...', true);
-    const data = new FormData(event.target);
-
-    updatedOrder.state = $("#orderStatus").val();
-    //const updatedOrder = Object.fromEntries(data.entries());
     console.log(updatedOrder);
 
     let orderId = $("#orderId").val();
     await setDoc(doc(database, "orders", orderId), Object.assign({}, updatedOrder))
     .then(function() {
         console.log("Order was updated successfully!");
+        $('#editOrderModal').modal('hide');
         toggleLoading('', false);
     })
     .catch(error => {
