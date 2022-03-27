@@ -46371,7 +46371,11 @@ function toggleLoading(loadingText, show){
     if(show){
       loadingDialog = bootbox.dialog({
         title: 'Loading',
-        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`
+        message: `<p><i class="fa fa-spin fa-spinner"></i>${loadingText}</p>`,
+        backdrop: true,
+        centerVertical: true,
+        onEscape: false,
+        closeButton: false
       });
     }
     else{
@@ -46418,7 +46422,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
-const stateTexts = ["Pending", "Processing", "On Delivery", "Delivered"];
+const stateTexts = ["Pending", "Processing", "On Delivery", "Received"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
 const editButtontemplate = '<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
 var selectedOrder;
@@ -46430,7 +46434,6 @@ $(function(){
     attachOrderTableListener();
     attachCheckBoxListener();
 });
-
 
 function attachEventListeners(){
     const form = document.getElementById('editOrderForm');
@@ -46445,6 +46448,19 @@ function attachEventListeners(){
     var myModalEl = document.getElementById('editOrderModal');
     myModalEl.addEventListener('shown.bs.modal', function (event) {
         formDeserialize(form, selectedOrder);
+    });
+    
+    form.addEventListener("change", function(event){
+        console.log(event.target);
+        let newValue = event.target.value;
+        let propertyName = $(event.target).attr('name');
+        let dataType = $(event.target).data('type');
+        // TODO: process newValue based on data type
+        if(dataType == "int"){
+            newValue = parseInt(newValue);
+        }
+        
+        updatedOrder[propertyName] = newValue;
     });
 }
 
@@ -46542,16 +46558,13 @@ function attachCheckBoxListener(){
 async function saveOrder(event) {
     event.preventDefault();
     (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('Saving order...', true);
-    const data = new FormData(event.target);
-
-    updatedOrder.state = $("#orderStatus").val();
-    //const updatedOrder = Object.fromEntries(data.entries());
     console.log(updatedOrder);
 
     let orderId = $("#orderId").val();
     await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.doc)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders", orderId), Object.assign({}, updatedOrder))
     .then(function() {
         console.log("Order was updated successfully!");
+        $('#editOrderModal').modal('hide');
         (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', false);
     })
     .catch(error => {
@@ -46580,7 +46593,6 @@ const orderConverter = {
         return new Order(snapshot.id, data.date_checkout, data.state, data.total_price, data.person_name);
     }
 };
-
 
 /***/ }),
 
@@ -48506,7 +48518,7 @@ function convertOffset(x, y, degrees) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("d1fb6c96540bac40312c")
+/******/ 		__webpack_require__.h = () => ("63240145be178e7fb9c6")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

@@ -36,7 +36,7 @@ function attachEventListeners(){
         console.log(event.target);
         let newValue = event.target.value;
         let propertyName = $(event.target).attr('name');
-        let dataType = $(event.target).attr('data-type');
+        let dataType = $(event.target).data('type');
         // TODO: process newValue based on data type
         if(dataType == "int"){
             newValue = parseInt(newValue);

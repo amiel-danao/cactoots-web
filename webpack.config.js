@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     index: './public/src/index.js',
     orders: './public/src/orders.js',
+    inventory: './public/src/inventory.js',
     waves: './public/src/waves.js',
     sidebarmenu: './public/src/sidebarmenu.js',
     custom: './public/src/custom.js'

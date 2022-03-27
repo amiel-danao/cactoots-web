@@ -3,6 +3,7 @@
     "bootstrap": "^5.1.3",
     "currency.js": "^2.0.4",
     "firebase": "^9.6.8",
+    "lightbox2": "^2.11.3",
     "moment": "^2.29.1",
     "spin.js": "^4.1.1"
   },
