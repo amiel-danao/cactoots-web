@@ -46424,7 +46424,8 @@ var orderTable;
 const stateColors = ["badge bg-info", "badge bg-primary", "badge bg-warning", "badge bg-success"];
 const stateTexts = ["Pending", "Processing", "On Delivery", "Received"];
 const orderCheckBoxTemplate = '<label class="customcheckbox"><input type="checkbox" class="listCheckbox" /><span class="checkmark"></span></label>';
-const editButtontemplate = '<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>';
+const editButtontemplate = `<button type="button" class="btn btn-info editOrderButton" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit <i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-danger deleteOrderButton" >Delete<i class="fas fa-close" aria-hidden="true"></i></button>`;
 var selectedOrder;
 var updatedOrder;
 
@@ -46432,7 +46433,6 @@ $(function(){
     initializeOrderTable();
     attachEventListeners();    
     attachOrderTableListener();
-    attachCheckBoxListener();
 });
 
 function attachEventListeners(){
@@ -46443,6 +46443,28 @@ function attachEventListeners(){
         selectedOrder = data;
         updatedOrder = selectedOrder;
         console.log(selectedOrder);
+    });
+    
+    $("#zero_config tbody").on("click", ".deleteOrderButton", function(){
+        let thisTr = $(this).closest('tr');
+        let selectedRows = $('.listCheckbox[type=checkbox]:checked');
+        let selectedIds = new Array();
+
+        selectedIds.push(thisTr.attr('id'));
+
+        selectedRows.each(function(){
+            let thisId = $(this).closest('tr').attr('id');
+            if(!selectedIds.includes(thisId)){
+                selectedIds.push(thisId);
+            }
+        });
+
+        console.table(selectedIds);
+        bootbox.confirm("Are you sure you want to delete the selected order(s)?", function(result){ 
+            if(result){
+                deleteOrder(selectedIds);                  
+            }
+        });
     });
 
     var myModalEl = document.getElementById('editOrderModal');
@@ -46461,6 +46483,27 @@ function attachEventListeners(){
         }
         
         updatedOrder[propertyName] = newValue;
+    });
+}
+
+async function deleteOrder(orderIds){
+    (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', true);
+    const batch = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.writeBatch)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database);
+
+    for(var i=0; i<orderIds.length; i++){
+        let thisOrderId = orderIds[i];
+        batch.set((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.doc)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders", thisOrderId), {deleted:true}, { merge: true });
+    }
+    
+    await batch.commit()
+    .then(function() {
+        console.log("Order(s) was deleted successfully!");
+        (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', false);
+        orderTable.draw();
+    })
+    .catch(error => {
+        (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.toggleLoading)('', false);
+        bootbox.alert(error);
     });
 }
 
@@ -46533,8 +46576,7 @@ function initializeOrderTable(){
 }
 
 function attachOrderTableListener(){
-    
-    const q = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders").withConverter(orderConverter)/*, where("state", "==", "CA")*/);
+    const q = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(_index_js__WEBPACK_IMPORTED_MODULE_0__.database, "orders").withConverter(orderConverter), (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.where)("deleted", "!=", true));
     const unsubscribe = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.onSnapshot)(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
@@ -46546,7 +46588,10 @@ function attachOrderTableListener(){
         }
         if (change.type === "removed") {
             console.log("Removed order: ", change.doc.data());
+            orderTable.row(`#${change.doc.id}`).remove().draw();
         }
+
+        attachCheckBoxListener();
       });
     });
 }
@@ -46574,12 +46619,13 @@ async function saveOrder(event) {
 }
 
 class Order {
-    constructor(id, date, state, totalPrice, customerName) {
+    constructor(id, date, state, totalPrice, customerName, deleted) {
         this.id = id;
         this.date_checkout = date;
         this.total_price = totalPrice;
         this.person_name = customerName;
         this.state = state;
+        this.deleted = deleted;
     }
 };
 
@@ -46590,7 +46636,7 @@ const orderConverter = {
     },
     fromFirestore: (snapshot, options) => {
         const data = snapshot.data(options);
-        return new Order(snapshot.id, data.date_checkout, data.state, data.total_price, data.person_name);
+        return new Order(snapshot.id, data.date_checkout, data.state, data.total_price, data.person_name, data.deleted);
     }
 };
 
@@ -48518,7 +48564,7 @@ function convertOffset(x, y, degrees) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("63240145be178e7fb9c6")
+/******/ 		__webpack_require__.h = () => ("eb823ad44b1dd49a55c2")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
