@@ -231,7 +231,24 @@
                             <input type="text" name="name" class="text-monospace" id="name" value="" required>
                         </div>
                     </div>
-                      <div class="row">
+                    <div class="row">
+                    
+                      <table id="itemEditTable" class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Variation</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+
+                      <button id="addNewVariationButton" type="button" class="list-group-item list-group-item-action btn btn-success"><i class="fa-solid fa-plus">Add new variation</i></button>
+                    </div>
+                      <!--<div class="row">
                           <label for="priceInput" class="text-monospace col-sm-2 col-form-label mb-3">
                               <h4>Price: </h4>
                           </label>
@@ -244,10 +261,11 @@
                               <h4> Quantity: </h4>
                           </label>
                           <div class="col mb-3">
-                              <input type="number" min="0" name="quantity" id="quantity" class="text-monospace" data-type="int""" required>
+                              <input type="number" min="0" name="quantity" id="quantity" class="text-monospace" data-type="int" required>
                           </div>
                       </div>
-                      <div class="row">
+                      
+                        <div class="row">
                           <label for="size" class="text-monospace col-sm-2 col-form-label mb-3">
                               <h4>Size:</h4>
                           </label>
@@ -262,7 +280,7 @@
                               </select>
                           </div>
                       </div>
-                      
+                      -->
                   </form>
               </div>
 
@@ -329,6 +347,7 @@
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+	<script src="https://kit.fontawesome.com/14144b74ca.js" crossorigin="anonymous"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/libs/lightbox2/dist/js/lightbox.min.js"></script>

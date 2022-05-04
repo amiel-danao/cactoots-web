@@ -39,13 +39,14 @@ function attachEventListeners(){
             let ref = doc(collection(database, "items"));
             let id = ref.id;
             console.log(id);
-            selectedItem = new Item(id, "", 0, 0, Timestamp.now());
+            selectedItem = new Item(id, "", {}, {}, Timestamp.now());
             $(this).find(".modal-title").text("Add new item");
             $('#editItemForm').get(0).reset();
         }
-
+        
+        $('#itemEditTable > tbody').empty();
         updatedItem = selectedItem;
-        formDeserialize(form, selectedItem);
+        formDeserialize(form, updatedItem);
     });
 
     var imageModal = document.getElementById("manageImageModal");
@@ -93,7 +94,42 @@ function attachEventListeners(){
     
     $("#itemThumbnailTable").on('click', '.itemEdit', function(){
         modalDialogTrigger = $(this);
+    });	
+	
+	$("#addNewVariationButton").on('click', function(){
+        bootbox.prompt("Enter variation name!", function(result){ 
+            console.log(result);
+			if(result != null && result.length > 0){
+                const key = result.toLowerCase();
+                let existingVariation = $(`input[value="${key}"]`);
+                console.log(existingVariation);
+                if(existingVariation == undefined || existingVariation == null || existingVariation.length == 0){
+				    $("#itemEditTable > tbody").append(getVariationTemplate(key, 0, 0));
+                    
+                    updatedItem['price'][key] = 0;
+                    updatedItem['quantity'][key] = 0;
+                }
+			}
+			else{
+				
+			}
+		});
     });
+
+    $("#itemEditTable").on('click', '.removeVariation', function(){
+        let key = $(this).closest('.itemVariation').val();
+        if(key in updated.price){
+            delete updatedItem['price'][key];
+        }
+
+        if(key in updated.quantity){
+            delete updatedItem['quantity'][key];
+        }
+
+        $(this).closest('tr').remove();
+    });	
+    
+		
 
     form.addEventListener("change", function(event){
         console.log(event.target);
@@ -105,8 +141,32 @@ function attachEventListeners(){
             newValue = parseInt(newValue);
         }
         
-        updatedItem[propertyName] = newValue;
+        let elem = $(event.target);        
+
+        if(elem.hasClass('price')){
+            let key = elem.closest('.itemVariation').val();
+            updatedItem['price'][key] = parseInt(elem.val());
+        }
+        else if(elem.hasClass('quantity')){
+            let key = elem.closest('.itemVariation').val();
+            updatedItem['quantity'][key] = parseInt(elem.val());
+        }
+        else if(elem.hasClass('itemVariation')){
+            
+        }
+        else{
+            updatedItem[propertyName] = newValue;
+        }
     });
+}
+
+function getVariationTemplate(name, price, quantity){
+	return `<tr class="itemVariationRow">
+        <th scope="row"><input type="text" class="text-monospace itemVariation" value="${name}" required></th>
+        <td><input type="number" min="0" class="text-monospace currency price" data-type="int" value="${price}" required></td>
+        <td><input type="number" min="0" class="text-monospace quantity" data-type="int" value="${quantity}" required></td>
+        <td><button class="btn btn-danger removeVariation"><i class="fa-solid fa-trash-can"></i></button></td>
+    </tr>`;
 }
 
 function formDeserialize(form, data) {
@@ -123,18 +183,30 @@ function formDeserialize(form, data) {
             continue;
         }
         
-        let proxyLabel = $(form).find("p[data-proxy='"+input.id+"']");
+        /*let proxyLabel = $(form).find("p[data-proxy='"+input.id+"']");
 
         if($(input).hasClass('currency')){
             if(proxyLabel != null){
                 proxyLabel.text(PESO(val).format());
             }
-        }
+        }*/
 
         switch(input.type) {
             case 'checkbox': input.checked = !!val; break;
             default:         input.value = val;     break;
         }
+    }
+
+    for(const [key, val] of Object.entries(data.price)) {
+        let name = key;
+        let price = val;
+        let quantity = 0;
+
+        if(key in data.quantity){
+            quantity = data.quantity[key];
+        }
+
+        $("#itemEditTable > tbody").append(getVariationTemplate(name, price, quantity));
     }
 }
 
@@ -260,7 +332,18 @@ async function putStorageItem(file) {
 
 
 function getItemTemplate(item){
-    //<img src="${defaultNoImage}" alt="item image">
+    
+    var totalQuantity = 0;
+    var pricesText = "";
+    for(const [key, val] of Object.entries(item.quantity)) {
+        totalQuantity += parseInt(val);
+
+        if(key in item.price){
+            let price = item.price[key];
+            pricesText += `${key} : ${PESO(price).format()}<br>`;
+        }
+    }
+
     return `<div id="${item.id}" class="col-lg-3 col-md-6 item-entry">
         <div class="card">
             <div class="el-card-item">
@@ -286,11 +369,11 @@ function getItemTemplate(item){
                     <button type="button" class="btn btn-primary position-relative itemEdit" data-bs-toggle="modal" data-bs-target="#editItemModal">
                     ${item.name}
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        ${item.quantity}
+                        ${totalQuantity}
                         <span class="visually-hidden">quantity</span>
                     </span>
                     </button>
-                    <p class="text-muted currency">${PESO(item.price).format()}</p>
+                    <p class="text-muted currency">${pricesText}</p>
                 </div>
             </div>
         </div>
@@ -298,6 +381,9 @@ function getItemTemplate(item){
 }
 
 async function saveItem(event) {
+    var validator = $("#editItemForm" ).validate();
+    //validator.form();
+
     event.preventDefault();
     toggleLoading('Saving item...', true);
     console.log(updatedItem);
