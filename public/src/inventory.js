@@ -141,14 +141,15 @@ function attachEventListeners(){
             newValue = parseInt(newValue);
         }
         
-        let elem = $(event.target);        
+        let elem = $(event.target);
+        let key = propertyName;
 
         if(elem.hasClass('price')){
-            let key = elem.closest('.itemVariation').val();
+            key = elem.parent().parent().find('.itemVariation').val();
             updatedItem['price'][key] = parseInt(elem.val());
         }
         else if(elem.hasClass('quantity')){
-            let key = elem.closest('.itemVariation').val();
+            key = elem.parent().parent().find('.itemVariation').val();
             updatedItem['quantity'][key] = parseInt(elem.val());
         }
         else if(elem.hasClass('itemVariation')){
@@ -276,7 +277,10 @@ function attachOrderTableListener(){
         }
         if (change.type === "modified") {
             console.log("Modified order: ", change.doc.data());
-            //orderTable.row('#'+change.doc.id).data( change.doc.data() ).draw();
+            let id = change.doc.id;
+
+            $(`#${id}`).find('.prices').html(getPricesTextTemplate(change.doc.data()));
+            $(`#${id}`).find('.quantity').text(getQuantityTextTemplate(change.doc.data()));
         }
         if (change.type === "removed") {
             console.log("Removed order: ", change.doc.data());
@@ -329,20 +333,32 @@ async function putStorageItem(file) {
     });
   }
 
-
-
-function getItemTemplate(item){
-    
-    var totalQuantity = 0;
-    var pricesText = "";
+function getQuantityTextTemplate(item){
+    let quantityText = 0;
     for(const [key, val] of Object.entries(item.quantity)) {
-        totalQuantity += parseInt(val);
+        quantityText += parseInt(val);
+    }
+    return quantityText;
+}
 
+function getPricesTextTemplate(item){
+    let pricesText = "";
+    for(const [key, val] of Object.entries(item.price)) {
         if(key in item.price){
             let price = item.price[key];
             pricesText += `${key} : ${PESO(price).format()}<br>`;
         }
     }
+
+    return pricesText;
+}
+
+
+function getItemTemplate(item){
+    
+    var totalQuantity = getQuantityTextTemplate(item);    
+
+    var pricesText = getPricesTextTemplate(item);    
 
     return `<div id="${item.id}" class="col-lg-3 col-md-6 item-entry">
         <div class="card">
@@ -368,12 +384,12 @@ function getItemTemplate(item){
                 
                     <button type="button" class="btn btn-primary position-relative itemEdit" data-bs-toggle="modal" data-bs-target="#editItemModal">
                     ${item.name}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <span class="quantity position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         ${totalQuantity}
                         <span class="visually-hidden">quantity</span>
                     </span>
                     </button>
-                    <p class="text-muted currency">${pricesText}</p>
+                    <p class="text-muted currency prices">${pricesText}</p>
                 </div>
             </div>
         </div>
@@ -381,10 +397,17 @@ function getItemTemplate(item){
 }
 
 async function saveItem(event) {
-    var validator = $("#editItemForm" ).validate();
+    event.preventDefault();
+    //var validator = $("#editItemForm" ).validate();
+    var changeEvent = new Event('change');
+
+    // Dispatch it.
+    $("#editItemForm > input").each(function(){
+        this.dispatchEvent(changeEvent);
+    });
     //validator.form();
 
-    event.preventDefault();
+    
     toggleLoading('Saving item...', true);
     console.log(updatedItem);
 
@@ -393,8 +416,9 @@ async function saveItem(event) {
     await setDoc(doc(database, "items", itemId), Object.assign({}, updatedItem))
     .then(function() {
         console.log("Item was updated successfully!");
-        $('#editItemModal').modal('hide');
         toggleLoading('', false);
+        $('#editItemModal').modal('hide');
+        
     })
     .catch(error => {
         toggleLoading('', false);
