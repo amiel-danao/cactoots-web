@@ -117,15 +117,18 @@ function attachEventListeners(){
     });
 
     $("#itemEditTable").on('click', '.removeVariation', function(){
-        let key = $(this).closest('.itemVariation').val();
-        if(key in updated.price){
-            delete updatedItem['price'][key];
+        let key = $(this).parent().parent().find('.itemVariation').val();
+        console.log(`key is ${key}`);
+        if(updatedItem.price.hasOwnProperty(key)){
+            delete updatedItem.price[key];
+            console.log(`updatedItem.price has ${key}`);
         }
 
-        if(key in updated.quantity){
-            delete updatedItem['quantity'][key];
+        if(updatedItem.quantity.hasOwnProperty(key)){
+            delete updatedItem.quantity[key];
         }
 
+        console.log(updatedItem);
         $(this).closest('tr').remove();
     });	
     

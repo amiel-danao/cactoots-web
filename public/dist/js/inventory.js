@@ -50157,15 +50157,18 @@ function attachEventListeners(){
     });
 
     $("#itemEditTable").on('click', '.removeVariation', function(){
-        let key = $(this).closest('.itemVariation').val();
-        if(key in updated.price){
-            delete updatedItem['price'][key];
+        let key = $(this).parent().parent().find('.itemVariation').val();
+        console.log(`key is ${key}`);
+        if(updatedItem.price.hasOwnProperty(key)){
+            delete updatedItem.price[key];
+            console.log(`updatedItem.price has ${key}`);
         }
 
-        if(key in updated.quantity){
-            delete updatedItem['quantity'][key];
+        if(updatedItem.quantity.hasOwnProperty(key)){
+            delete updatedItem.quantity[key];
         }
 
+        console.log(updatedItem);
         $(this).closest('tr').remove();
     });	
     
@@ -52411,7 +52414,7 @@ function convertOffset(x, y, degrees) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("ce27017a13c320bb0af2")
+/******/ 		__webpack_require__.h = () => ("b00a6c14438983b45f01")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
